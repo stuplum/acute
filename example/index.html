@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en" ng-app="acuteApp">
+<head>
+    <meta charset="utf-8">
+
+    <title>Acute Examples</title>
+
+    <style type="text/css">
+        .avatar { border: 2px solid white; }
+    </style>
+</head>
+<body>
+
+    <div ng-controller="AppCtrl">
+
+        <h1>acute.gravatar</h1>
+
+        <gravatar-image data-email="email"
+                        data-size="120"
+                        data-rating="pg"
+                        data-default="404"
+                        data-secure="true"
+                        data-css-class="avatar"></gravatar-image>
+    </div>
+
+    <script src="js/lib/angular.js"></script>
+    <script src="js/acuteApp.js"></script>
+    <script src="../src/md5/acute.md5.js"></script>
+    <script src="../src/gravatar/acute.gravatar.js"></script>
+
+</body>
+</html>
