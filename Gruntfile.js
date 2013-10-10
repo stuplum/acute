@@ -204,7 +204,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-express-server');
 
 
-    grunt.registerTask('package', [ 'clean', 'concat', 'uglify' ]);
+    grunt.registerTask('package', [ 'clean', 'concat', 'uglify', 'clean' ]);
 
     grunt.registerTask('server', function (env, watch) {
         env = env ? env : 'dev';
