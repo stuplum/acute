@@ -14,14 +14,12 @@ module.exports = function(grunt) {
 
         dirs: {
             src:      'src',
-            build:    'build',
-            dist:     'dist/<%= pkg.name %>/<%= pkg.version %>'
+            build:    'build'
         },
 
         // Task configuration.
         clean: {
-            build: { src: './build/' },
-            dist:  { src: './dist/' }
+            build: { src: './build/' }
         },
 
         concat: {
@@ -57,7 +55,7 @@ module.exports = function(grunt) {
 
             prod: {
                 files: [
-                    { dest: '<%= dirs.dist %>/<%= pkg.name %>.min.js', src: ['<%= dirs.build %>/<%= pkg.name %>.concat.js'], nonull: true }
+                    { dest: '<%= pkg.name %>.min.js', src: ['<%= dirs.build %>/<%= pkg.name %>.concat.js'], nonull: true }
                 ]
             }
         },
@@ -140,13 +138,6 @@ module.exports = function(grunt) {
             dev: {
                 options: {
                     script: '<%= dirs.build %>/app.js'
-                }
-            },
-
-            prod: {
-                options: {
-                    script: '<%= dirs.dist %>/app.js',
-                    node_env: 'production'
                 }
             },
 

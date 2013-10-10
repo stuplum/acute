@@ -13,6 +13,7 @@
         "url": "https://github.com/stuplum/acute/issues"
     },
     "devDependencies": {
+        "bower":"*",
 
         "karma": "0.10",
         "karma-sinon":"0.0.1",
