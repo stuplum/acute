@@ -1,5 +1,7 @@
 describe('acute.gravatar', function() {
 
+    'use strict';
+
     var $avatar;
 
     beforeEach(function() {

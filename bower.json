@@ -1,20 +1,22 @@
 {
   "name": "acute",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/stuplum/acute",
   "authors": [
     "stuplum <stuart.plumbley@bskyb.com>"
   ],
   "description": "Collection of utilities for AngularJS",
   "main": "src/acute.js",
-  "license": "MIT",
+  "license": "BSD",
   "ignore": [
     "**/.*",
+
     ".idea",
     "build",
     "example",
     "node_modules",
     "bower_components",
-    "test"
+    "test",
+    "src"
   ]
 }

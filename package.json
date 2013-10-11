@@ -3,7 +3,7 @@
     "author": "stuplum <stuplum@gmail.com>",
     "license": "BSD",
     "description": "Collection of utilities for AngularJS",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "keywords": ["angularjs", "typeahead", "autocomplete", "md5", "gravatar", "directive"],
     "repository": {
         "type": "git",

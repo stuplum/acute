@@ -1,6 +1,8 @@
 /*global module:false*/
 module.exports = function(grunt) {
 
+    'use strict';
+
     grunt.initConfig({
 
         // Metadata.
@@ -13,15 +15,10 @@ module.exports = function(grunt) {
             ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n\n',
 
         dirs: {
-            src:      'src',
-            build:    'build'
+            src: 'src'
         },
 
         // Task configuration.
-        clean: {
-            build: { src: './build/' }
-        },
-
         concat: {
 
             options: {
@@ -39,7 +36,7 @@ module.exports = function(grunt) {
 
             prod: {
                 files: [
-                    { dest: '<%= dirs.build %>/<%= pkg.name %>.concat.js', src: ['<%= dirs.src %>/acute.js', '<%= dirs.src %>/**/acute.*.js'], nonull: true }
+                    { dest: '<%= pkg.name %>.js', src: ['<%= dirs.src %>/acute.js', '<%= dirs.src %>/**/acute.*.js'], nonull: true }
                 ]
             }
         },
@@ -50,12 +47,13 @@ module.exports = function(grunt) {
                 banner: '<%= banner %>',
                 mangle: {
                     except: ['angular', '_']
-                }
+                },
+                sourceMap: '<%= pkg.name %>.min.js.map'
             },
 
             prod: {
                 files: [
-                    { dest: '<%= pkg.name %>.min.js', src: ['<%= dirs.build %>/<%= pkg.name %>.concat.js'], nonull: true }
+                    { dest: '<%= pkg.name %>.min.js', src: ['<%= pkg.name %>.js'], nonull: true }
                 ]
             }
         },
@@ -87,14 +85,6 @@ module.exports = function(grunt) {
                 src: 'Gruntfile.js'
             },
 
-            express: {
-                src: '<%= dirs.build %>/public/scripts/app/**/*.js'
-            },
-
-            app: {
-                src: [ '<%= dirs.build %>/app.js', '<%= dirs.build %>/routes/**/*.js' ]
-            },
-
             test: {
                 options: {
                     globals: {
@@ -121,90 +111,23 @@ module.exports = function(grunt) {
                         responses: true
                     }
                 },
-                src: ['test/integration/*.js', 'test/unit/*.js']
+                src: ['test/unit/*.js']
             },
 
             lib: {
                 src: ['lib/**/*.js']
             }
-        },
-
-        express: {
-
-            options: {
-                // Override defaults here
-            },
-
-            dev: {
-                options: {
-                    script: '<%= dirs.build %>/app.js'
-                }
-            },
-
-            test: {
-                options: {
-                    script: 'path/to/test/server.js'
-                }
-            }
-        },
-
-        open: {
-
-            app: {
-                path: 'http://dev.iamatomic.com:3000',
-                app: 'Google Chrome'
-            },
-
-            hosts : {
-                path : '/etc/hosts'
-            }
-        },
-
-        watch: {
-            options: { livereload: true },
-
-            gruntfile: {
-                files: '<%= jshint.gruntfile.src %>',
-                tasks: ['jshint:gruntfile']
-            },
-
-            express: {
-                files: [ '<%= dirs.src %>/app.js', '<%= dirs.src %>/routes/**' ],
-                tasks: ['package:dev', 'jshint:express', 'express:dev']
-            },
-
-            src: {
-                files: ['<%= dirs.src %>/public/**', '<%= dirs.src %>/views/**'],
-                tasks: ['package:dev', 'jshint:app', 'jshint:test']
-            },
-
-            stylus: {
-                files: ['<%= dirs.src %>/style/**'],
-                tasks: 'package:dev' //stylushint????
-            },
-
-            test: {
-                files: '<%= jshint.test.src %>',
-                tasks: 'jshint:test'
-            }
-
         }
     });
 
     // These plugins provide necessary tasks.
-    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-
-    grunt.loadNpmTasks('grunt-open');
     grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-express-server');
 
-
-    grunt.registerTask('package', [ 'clean', 'concat', 'uglify', 'clean' ]);
+    grunt.registerTask('package', [ 'jshint', 'concat', 'uglify' ]);
 
     grunt.registerTask('server', function (env, watch) {
         env = env ? env : 'dev';
