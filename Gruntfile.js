@@ -5,7 +5,6 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
 
-        // Metadata.
         pkg: grunt.file.readJSON('package.json'),
 
         banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
@@ -18,7 +17,6 @@ module.exports = function(grunt) {
             src: 'src'
         },
 
-        // Task configuration.
         concat: {
 
             options: {
@@ -120,7 +118,6 @@ module.exports = function(grunt) {
         }
     });
 
-    // These plugins provide necessary tasks.
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -129,13 +126,5 @@ module.exports = function(grunt) {
 
     grunt.registerTask('package', [ 'jshint', 'concat', 'uglify' ]);
 
-    grunt.registerTask('server', function (env, watch) {
-        env = env ? env : 'dev';
-        grunt.task.run('express:' + env);
-        grunt.task.run('open:app');
-        if(watch) { grunt.task.run('watch'); }
-    });
-
-    // Run Dev by default
     grunt.registerTask('default', [ 'package' ]);
 };

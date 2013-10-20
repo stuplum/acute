@@ -1,39 +1,46 @@
-'use strict';
+(function () {
 
-angular.module('acute.gravatar', ['acute.md5'])
+    'use strict';
 
-    .factory('gravatarService', ['md5', function (md5) {
+    angular.module('acute.gravatar', ['acute.md5'])
 
-        return {
-            getImageSrc: function (email, attrs) {
+        .factory('gravatarService', ['md5', function (md5) {
 
-                var hash       = md5.createHash(email.toLowerCase()),
-                    domain     = attrs.secure ? 'https://secure' : 'http://www',
-                    size       = attrs.size || 40,
-                    rating     = attrs.rating || 'pg',
-                    defaultUrl = attrs.default || '404';
+            return {
+                getImageSrc: function (email, attrs) {
 
-                return domain + '.gravatar.com/avatar/' + hash + '?s=' + size + '&r=' + rating + '&d=' + defaultUrl;
-            }
-        };
-    }])
+                    var hash       = md5.createHash(email.toLowerCase()),
+                        domain     = attrs.secure ? 'https://secure' : 'http://www',
+                        size       = attrs.size || 40,
+                        rating     = attrs.rating || 'pg',
+                        defaultUrl = attrs.default || '404';
 
-    .directive('acuteGravatar', ['gravatarService', function (gravatarService) {
+                    return domain + '.gravatar.com/avatar/' + hash + '?s=' + size + '&r=' + rating + '&d=' + defaultUrl;
+                }
+            };
+        }])
 
-        return {
+        .directive('acuteGravatar', ['gravatarService', function (gravatarService) {
 
-            restrict: "AC",
+            return {
 
-            link: function (scope, el, attrs) {
+                restrict: "AC",
 
-                scope.$watch(attrs.email, function (email) {
+                link: function (scope, el, attrs) {
 
-                    var emailDefined = (email !== null) && (email !== undefined) && (email !== ''),
-                        emailValid   = (null != email.match(/.*@.*\..{2}/));
+                    scope.$watch(attrs.email, function (email) {
 
-                    if (emailDefined && emailValid) {
-                        el.attr('src', gravatarService.getImageSrc(email, attrs));
-                    }
-                });
-            }};
-    }]);
+                        if(email) {
+                            var emailDefined = (email !== null) && (email !== undefined) && (email !== ''),
+                                emailValid   = (null != email.match(/.*@.*\..{2}/));
+
+                            if (emailDefined && emailValid) {
+                                el.attr('src', gravatarService.getImageSrc(email, attrs));
+                            }
+                        }
+
+                    });
+                }};
+        }]);
+
+})();

@@ -1,14 +1,14 @@
 describe('acute.gravatar', function() {
 
     'use strict';
-
-    var $avatar;
+    
+    var template, $avatar;
 
     beforeEach(function() {
 
         module('acute.gravatar');
 
-        var template = '<img acute-gravatar data-email="email" data-size="120" data-rating="pg" data-default="404" />';
+        template = '<img acute-gravatar data-email="email" data-size="120" data-rating="pg" data-default="404" />';
 
         $avatar = compileDirective(template, { $rootScope: { email: 'hash@me.com' } });
     });
@@ -39,6 +39,10 @@ describe('acute.gravatar', function() {
         var imageSrc = $avatar.attr('src');
 
         expect(imageSrc).toContain('d=404');
+    });
+
+    it('should not throw error if email is undefined', function () {
+        expect(function() { compileDirective(template, { $rootScope: { email: undefined } }); }).not.toThrow();
     });
 
 });
