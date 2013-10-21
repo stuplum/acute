@@ -8,7 +8,7 @@ describe('acute.gravatar', function() {
 
         module('acute.gravatar');
 
-        template = '<img acute-gravatar data-email="email" data-size="120" data-rating="pg" data-default="404" />';
+        template = '<img acute-gravatar data-gravatar-email="email" data-gravatar-size="120" data-gravatar-rating="pg" data-gravatar-default="404" />';
 
         $avatar = compileDirective(template, { $rootScope: { email: 'hash@me.com' } });
     });

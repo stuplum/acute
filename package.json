@@ -3,8 +3,8 @@
     "author": "stuplum <stuplum@gmail.com>",
     "license": "BSD",
     "description": "Collection of utilities for AngularJS",
-    "version": "0.0.4",
-    "keywords": ["angularjs", "typeahead", "autocomplete", "md5", "gravatar", "directive"],
+    "version": "0.0.5",
+    "keywords": ["angularjs", "md5", "gravatar", "directive"],
     "repository": {
         "type": "git",
         "url": "https://github.com/stuplum/acute.git"
