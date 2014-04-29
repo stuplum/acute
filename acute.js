@@ -1,60 +1,69 @@
 (function () {
 
-/*! acute - v0.0.5 - 2013-10-21
-* Copyright (c) 2013 stuplum <stuplum@gmail.com>; Licensed  */
+/*! acute - v0.0.6 - 2014-04-29
+* Copyright (c) 2014 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
 
 // Source: src/acute.js
 angular.module('acute.utils',  [
-    "acute.md5",
-    "acute.gravatar"
+    'acute.md5',
+    'acute.gravatar'
 ]);
-// Source: src/gravatar/acute.gravatar.js
-(function () {
+// Source: src/filters/acute.filter.camelCaseToHuman.js
+angular.module('acute.filter.camelCaseToHuman', []).filter('camelCaseToHuman', function() {
+    return function(input) {
+        return input.charAt(0).toUpperCase() + input.substr(1).replace(/[A-Z]/g, ' $&');
+    };
+});
 
+// Source: src/filters/acute.filters.js
+angular.module('acute.filters', [
+    'acute.filter.camelCaseToHuman'
+]);
+
+// Source: src/gravatar/acute.gravatar.js
 angular.module('acute.gravatar', ['acute.md5'])
 
-        .factory('gravatarService', ['md5', function (md5) {
+    .factory('gravatarService', ['md5', function (md5) {
 
-            return {
-                getImageSrc: function (gravatarEmail, attrs) {
+        return {
+            getImageSrc: function (gravatarEmail, attrs) {
 
-                    var hash       = md5.createHash(gravatarEmail.toLowerCase()),
-                        domain     = attrs.gravatarSecure ? 'https://secure' : 'http://www',
-                        size       = attrs.gravatarSize || 40,
-                        rating     = attrs.gravatarRating || 'pg',
-                        defaultUrl = attrs.gravatarDefault || '404';
+                var hash       = md5.createHash(gravatarEmail.toLowerCase()),
+                    domain     = attrs.gravatarSecure ? 'https://secure' : 'http://www',
+                    size       = attrs.gravatarSize || 40,
+                    rating     = attrs.gravatarRating || 'pg',
+                    defaultUrl = attrs.gravatarDefault || '404';
 
-                    return domain + '.gravatar.com/avatar/' + hash + '?s=' + size + '&r=' + rating + '&d=' + defaultUrl;
-                }
-            };
-        }])
+                return domain + '.gravatar.com/avatar/' + hash + '?s=' + size + '&r=' + rating + '&d=' + defaultUrl;
+            }
+        };
+    }])
 
-        .directive('acuteGravatar', ['gravatarService', function (gravatarService) {
+    .directive('acuteGravatar', ['gravatarService', function (gravatarService) {
 
-            return {
+        return {
 
-                restrict: "AC",
+            restrict: "AC",
 
-                link: function (scope, el, attrs) {
+            link: function (scope, el, attrs) {
 
-                    scope.$watch(attrs.gravatarEmail, function (gravatarEmail) {
+                scope.$watch(attrs.gravatarEmail, function (gravatarEmail) {
 
-                        if(gravatarEmail) {
-                            var emailDefined = (gravatarEmail !== null) && (gravatarEmail !== undefined) && (gravatarEmail !== ''),
-                                emailValid   = (null != gravatarEmail.match(/.*@.*\..{2}/));
+                    if(gravatarEmail) {
+                        var emailDefined = (gravatarEmail !== null) && (gravatarEmail !== undefined) && (gravatarEmail !== ''),
+                            emailValid   = (null != gravatarEmail.match(/.*@.*\..{2}/));
 
-                            if (emailDefined && emailValid) {
-                                el.attr('src', gravatarService.getImageSrc(gravatarEmail, attrs));
-                            }
+                        if (emailDefined && emailValid) {
+                            el.attr('src', gravatarService.getImageSrc(gravatarEmail, attrs));
                         }
+                    }
 
-                    });
-                }};
-        }]);
-
-})();
+                });
+            }
+        };
+    }]);
 // Source: src/md5/acute.md5.js
 angular.module('acute.md5', [])
 

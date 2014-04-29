@@ -3,7 +3,7 @@
     "author": "stuplum <stuplum@gmail.com>",
     "license": "BSD",
     "description": "Collection of utilities for AngularJS",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "keywords": ["angularjs", "md5", "gravatar", "directive"],
     "repository": {
         "type": "git",

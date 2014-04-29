@@ -14,17 +14,9 @@ module.exports = function (config) {
             'src/**/*.js',
 
             'test/unit/**/*.js'
-
-            // the templates
-//            'elements/*.atom'
         ],
 
         exclude: [],
-
-//        preprocessors: {
-//            '**/*.atom': 'html2js',
-//            '**/*.html': 'html2js'
-//        },
 
         reporters: ['progress'],
 
