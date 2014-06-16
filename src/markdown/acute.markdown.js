@@ -2,7 +2,7 @@
 
 angular.module('acute.markdown', ['ngSanitize'])
 
-    .provider('markdownParser', function () {
+    .provider('markdownParser', function() {
 
         var opts = {};
 
@@ -18,7 +18,7 @@ angular.module('acute.markdown', ['ngSanitize'])
         };
     })
 
-    .directive('acuteMarkdown', function ($sanitize, markdownParser) {
+    .directive('acuteMarkdown', ['$sanitize', 'markdownParser', function($sanitize, markdownParser) {
 
         function sanitizeAndParse(val) {
             return $sanitize(markdownParser.makeHtml(val));
@@ -47,4 +47,4 @@ angular.module('acute.markdown', ['ngSanitize'])
                 }
             }
         };
-    });
+    }]);
