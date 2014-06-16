@@ -1,6 +1,6 @@
 {
   "name": "acute",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "homepage": "https://github.com/stuplum/acute",
   "authors": [
     "stuplum <stuart.plumbley@bskyb.com>"
@@ -8,6 +8,14 @@
   "description": "Collection of utilities for AngularJS",
   "main": "src/acute.js",
   "license": "BSD",
+  "dependencies": {
+    "angular": "~1.2",
+    "angular-sanitize": "~1.2",
+    "showdown": "~0.3.1"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.2"
+  },
   "ignore": [
     "**/.*",
 

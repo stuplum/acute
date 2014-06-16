@@ -6,9 +6,12 @@ module.exports = function (config) {
         frameworks: ['jasmine', 'sinon'],
 
         files: [
-            'example/js/lib/angular.js',
+            'bower_components/angular/angular.js',
+            'bower_components/angular-sanitize/angular-sanitize.js',
+            'bower_components/showdown/src/showdown.js',
+            'bower_components/showdown/src/extensions/*.js',
 
-            'test/lib/angular-mocks.js',
+            'bower_components/angular-mocks/angular-mocks.js',
             'test/lib/spec-helper.js',
 
             'src/**/*.js',

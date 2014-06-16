@@ -75,7 +75,8 @@ module.exports = function(grunt) {
                     ATOMIC: true,
                     jQuery: true,
                     angular: true,
-                    _: true
+                    _: true,
+                    Showdown: true
                 }
             },
 
@@ -86,6 +87,7 @@ module.exports = function(grunt) {
             test: {
                 options: {
                     globals: {
+                        angular: true,
                         jQuery: true,
                         describe: true,
                         xdescribe: true,
