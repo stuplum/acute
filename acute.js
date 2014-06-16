@@ -1,15 +1,16 @@
 (function () {
 
-/*! acute - v0.1.2 - 2014-04-29
+/*! acute - v0.2.0 - 2014-06-17
 * Copyright (c) 2014 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
 
 // Source: src/acute.js
 angular.module('acute.utils',  [
-    'acute.md5',
+    'acute.filters',
     'acute.gravatar',
-    'acute.filters'
+    'acute.markdown',
+    'acute.md5'
 ]);
 // Source: src/filters/acute.filter.camelCaseToHuman.js
 angular.module('acute.filter.camelCaseToHuman', []).filter('camelCaseToHuman', function() {
@@ -65,6 +66,55 @@ angular.module('acute.gravatar', ['acute.md5'])
             }
         };
     }]);
+// Source: src/markdown/acute.markdown.js
+angular.module('acute.markdown', ['ngSanitize'])
+
+    .provider('markdownParser', function () {
+
+        var opts = {};
+
+        return {
+
+            config: function (newOpts) {
+                opts = newOpts;
+            },
+
+            $get: function () {
+                return new Showdown.converter(opts);
+            }
+        };
+    })
+
+    .directive('acuteMarkdown', function ($sanitize, markdownParser) {
+
+        function sanitizeAndParse(val) {
+            return $sanitize(markdownParser.makeHtml(val));
+        }
+
+        function hasMarkdown(doNext) {
+            return function (newVal) {
+                doNext(newVal ? sanitizeAndParse(newVal) : '');
+            };
+        }
+
+        return {
+
+            restrict: 'AE',
+
+            link: function (scope, element, attrs) {
+
+                function appendHtml(html) {
+                    element.html(html);
+                }
+
+                if(attrs.acuteMarkdown) {
+                    scope.$watch(attrs.acuteMarkdown, hasMarkdown(appendHtml));
+                } else {
+                    appendHtml(sanitizeAndParse(element.text()));
+                }
+            }
+        };
+    });
 // Source: src/md5/acute.md5.js
 angular.module('acute.md5', [])
 
