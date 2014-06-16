@@ -41,9 +41,7 @@ angular.module('acute.markdown', ['ngSanitize'])
                 }
 
                 if(attrs.acuteMarkdown) {
-
                     scope.$watch(attrs.acuteMarkdown, hasMarkdown(appendHtml));
-
                 } else {
                     appendHtml(sanitizeAndParse(element.text()));
                 }
