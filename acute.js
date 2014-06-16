@@ -1,6 +1,6 @@
 (function () {
 
-/*! acute - v0.2.0 - 2014-06-17
+/*! acute - v0.2.2 - 2014-06-17
 * Copyright (c) 2014 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
@@ -69,7 +69,7 @@ angular.module('acute.gravatar', ['acute.md5'])
 // Source: src/markdown/acute.markdown.js
 angular.module('acute.markdown', ['ngSanitize'])
 
-    .provider('markdownParser', function () {
+    .provider('markdownParser', function() {
 
         var opts = {};
 
@@ -85,7 +85,7 @@ angular.module('acute.markdown', ['ngSanitize'])
         };
     })
 
-    .directive('acuteMarkdown', function ($sanitize, markdownParser) {
+    .directive('acuteMarkdown', ['$sanitize', 'markdownParser', function($sanitize, markdownParser) {
 
         function sanitizeAndParse(val) {
             return $sanitize(markdownParser.makeHtml(val));
@@ -114,7 +114,7 @@ angular.module('acute.markdown', ['ngSanitize'])
                 }
             }
         };
-    });
+    }]);
 // Source: src/md5/acute.md5.js
 angular.module('acute.md5', [])
 
