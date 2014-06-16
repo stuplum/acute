@@ -1,5 +1,6 @@
 angular.module('acute.utils',  [
-    'acute.md5',
+    'acute.filters',
     'acute.gravatar',
-    'acute.filters'
+    'acute.markdown',
+    'acute.md5'
 ]);

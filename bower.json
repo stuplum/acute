@@ -9,7 +9,9 @@
   "main": "src/acute.js",
   "license": "BSD",
   "dependencies": {
-    "angular": "~1.2"
+    "angular": "~1.2",
+    "angular-sanitize": "~1.2",
+    "showdown": "~0.3.1"
   },
   "devDependencies": {
     "angular-mocks": "~1.2"
