@@ -1,3 +1,5 @@
+'use strict';
+
 describe('acuteMarkdown', function() {
 
     beforeEach(module('ngSanitize', 'acute.markdown'));
@@ -55,5 +57,6 @@ describe('markdownParserProvider', function () {
         var md = compileDirective('<acute-markdown>@twitteruser</acute-markdown>');
 
         expect(md.html()).toBe('<p><a href="http://twitter.com/twitteruser">@twitteruser</a></p>');
-    })
-})
+    });
+
+});
