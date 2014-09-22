@@ -1,6 +1,6 @@
 (function () {
 
-/*! acute - v0.2.2 - 2014-06-17
+/*! acute - v0.3.0 - 2014-09-22
 * Copyright (c) 2014 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
@@ -329,4 +329,70 @@ angular.module('acute.md5', [])
 
         return md5;
 
+    }]);
+// Source: src/string/acute.string.js
+angular.module('acute.string', [
+    'acute.string.toCamelCase',
+    'acute.string.toHyphenated',
+    'acute.string.toDotNotation'
+]);
+
+angular.module('acute.string.utils', []).service('~normalizeAndSeparate', function () {
+
+    function camelToHyphen(string) {
+        return string.replace(/([a-z\d])([A-Z])/g, '$1-$2');
+    }
+
+    function replaceSpaces(string) {
+        return string.split(' ').join('-');
+    }
+
+    function replaceNonAlphaNumeric(string, separator) {
+        return string.replace(/\W/g, separator);
+    }
+
+    return function normalizeAndSeparate(input, separator) {
+
+        var normalized;
+
+        normalized = camelToHyphen(input);
+        normalized = replaceSpaces(normalized);
+        normalized = replaceNonAlphaNumeric(normalized, separator);
+
+        return normalized.toLowerCase();
+    };
+
+});
+// Source: src/string/acute.string.toCamelCase.js
+angular
+    .module('acute.string.toCamelCase', ['acute.string.utils'])
+    .factory('stringToCamelCase', ['~normalizeAndSeparate', function (normalizeAndSeparate) {
+
+        function hyphenToCamel(string) {
+            return string.toLowerCase().replace(/-(.)/g, function (match, group1) {
+                return group1.toUpperCase();
+            });
+        }
+
+        return function(input) {
+            return hyphenToCamel(normalizeAndSeparate(input, '-'));
+        };
+    }]);
+// Source: src/string/acute.string.toDotNotation.js
+angular
+    .module('acute.string.toDotNotation', ['acute.string.utils'])
+    .factory('stringToDotNotation', ['~normalizeAndSeparate', function (normalizeAndSeparate) {
+
+        return function (input) {
+            return normalizeAndSeparate(input, '.');
+        };
+    }]);
+// Source: src/string/acute.string.toHyphenated.js
+angular
+    .module('acute.string.toHyphenated', ['acute.string.utils'])
+    .factory('stringToHyphenated', ['~normalizeAndSeparate', function (normalizeAndSeparate) {
+
+        return function (input) {
+            return normalizeAndSeparate(input, '-');
+        };
     }]);})();
