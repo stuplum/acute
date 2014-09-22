@@ -8,7 +8,7 @@ describe('acute.filters', function() {
             module('acute.filters');
         });
 
-        it('should reverse an array', inject(function (camelCaseToHumanFilter) {
+        it('should capitalise and add spaces to camel case text', inject(function (camelCaseToHumanFilter) {
             expect(camelCaseToHumanFilter('camelCase')).toEqual('Camel Case');
         }));
 
