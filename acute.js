@@ -1,6 +1,6 @@
 (function () {
 
-/*! acute - v0.3.0 - 2014-09-22
+/*! acute - v0.3.1 - 2014-09-23
 * Copyright (c) 2014 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
@@ -10,7 +10,8 @@ angular.module('acute.utils',  [
     'acute.filters',
     'acute.gravatar',
     'acute.markdown',
-    'acute.md5'
+    'acute.md5',
+    'acute.string'
 ]);
 // Source: src/filters/acute.filter.camelCaseToHuman.js
 angular.module('acute.filter.camelCaseToHuman', []).filter('camelCaseToHuman', function() {
