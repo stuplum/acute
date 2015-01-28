@@ -4,7 +4,7 @@ describe('acute.session', function () {
 
     beforeEach(module('acute.session'));
 
-    describe('session', function () {
+    ddescribe('session', function () {
 
         beforeEach(function () {
             mockModule('cache', {session: {}});
@@ -14,11 +14,22 @@ describe('acute.session', function () {
             expect(session.token).toBeUndefined();
         }));
 
+        it('should initialise session user to undefined', inject(function (session) {
+            expect(session.user).toBeUndefined();
+        }));
+
         it('should initialise session token from cache', inject(function (cache, session) {
 
-            cache.session.token = 'from cache';
+            cache.session.token = 'token from cache';
 
-            expect(session.token).toBe('from cache');
+            expect(session.token).toBe('token from cache');
+        }));
+
+        it('should initialise session user from cache', inject(function (cache, session) {
+
+            cache.session.user = 'user from cache';
+
+            expect(session.user).toBe('user from cache');
         }));
 
         describe('isActive', function () {
@@ -45,6 +56,14 @@ describe('acute.session', function () {
                 expect(cache.session.token).toBe('a,session,token');
             }));
 
+            it('should add user to session', inject(function (cache, session) {
+
+                session.create('bovvered', 'a,session,user');
+
+                expect(session.user).toBe('a,session,user');
+                expect(cache.session.user).toBe('a,session,user');
+            }));
+
             it('should overwrite an existing token', inject(function (cache, session) {
 
                 cache.session.token = 'an old token';
@@ -52,6 +71,15 @@ describe('acute.session', function () {
                 session.create('a,session,token');
 
                 expect(session.token).toBe('a,session,token');
+            }));
+
+            it('should overwrite an existing user', inject(function (cache, session) {
+
+                cache.session.user = 'an old user';
+
+                session.create('menocare', 'a,session,user');
+
+                expect(session.user).toBe('a,session,user');
             }));
 
         });

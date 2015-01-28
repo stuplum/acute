@@ -29,16 +29,27 @@ angular.module('acute.session', [])
                     }
                 },
 
+                user: {
+                    get: function () {
+                        return cache[CACHE_KEY].user;
+                    },
+                    set: function (value) {
+                        cache[CACHE_KEY].user = value;
+                    }
+                },
+
                 isActive: { value: function () {
                     return angular.isDefined(this.token);
                 } },
 
-                create: { value: function (_token_) {
-                    this.token = _token_;
+                create: { value: function (token, user) {
+                    this.token = token;
+                    this.user  = user;
                 } },
 
                 invalidate: { value: function () {
                     this.token = undefined;
+                    this.user  = undefined;
                 } }
             });
         }];
