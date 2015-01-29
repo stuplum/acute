@@ -4,7 +4,7 @@ describe('acute.session', function () {
 
     beforeEach(module('acute.session'));
 
-    ddescribe('session', function () {
+    describe('session', function () {
 
         beforeEach(function () {
             mockModule('cache', {session: {}});
