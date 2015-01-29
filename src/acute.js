@@ -3,5 +3,6 @@ angular.module('acute.utils',  [
     'acute.gravatar',
     'acute.markdown',
     'acute.md5',
+    'acute.session',
     'acute.string'
 ]);
