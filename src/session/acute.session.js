@@ -51,6 +51,7 @@ angular.module('acute.session', [])
                     this.token = undefined;
                     this.user  = undefined;
                 } }
+
             });
         }];
 

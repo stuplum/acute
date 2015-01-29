@@ -1,4 +1,5 @@
 angular.module('acute.utils',  [
+    'acute.clientStore',
     'acute.filters',
     'acute.gravatar',
     'acute.markdown',
