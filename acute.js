@@ -1,7 +1,7 @@
 (function () {
 
-/*! acute - v0.3.1 - 2014-09-23
-* Copyright (c) 2014 stuplum <stuplum@gmail.com>; Licensed  */
+/*! acute - v0.3.2 - 2015-01-28
+* Copyright (c) 2015 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
 
@@ -11,6 +11,7 @@ angular.module('acute.utils',  [
     'acute.gravatar',
     'acute.markdown',
     'acute.md5',
+    'acute.session',
     'acute.string'
 ]);
 // Source: src/filters/acute.filter.camelCaseToHuman.js
@@ -331,6 +332,62 @@ angular.module('acute.md5', [])
         return md5;
 
     }]);
+// Source: src/session/acute.session.js
+angular.module('acute.session', [])
+
+    .provider('session', function () {
+
+        var CACHE_KEY = 'session';
+
+        this.setCacheKey = function (cacheKey) {
+            CACHE_KEY = cacheKey;
+        };
+
+        this.$get = ['cache', function (cache) {
+
+            function initSessionInCache() {
+                cache[CACHE_KEY] = cache[CACHE_KEY] || {};
+            }
+
+            initSessionInCache();
+
+            return Object.create({}, {
+
+                token: {
+                    get: function () {
+                        return cache[CACHE_KEY].token;
+                    },
+                    set: function (value) {
+                        cache[CACHE_KEY].token = value;
+                    }
+                },
+
+                user: {
+                    get: function () {
+                        return cache[CACHE_KEY].user;
+                    },
+                    set: function (value) {
+                        cache[CACHE_KEY].user = value;
+                    }
+                },
+
+                isActive: { value: function () {
+                    return angular.isDefined(this.token);
+                } },
+
+                create: { value: function (token, user) {
+                    this.token = token;
+                    this.user  = user;
+                } },
+
+                invalidate: { value: function () {
+                    this.token = undefined;
+                    this.user  = undefined;
+                } }
+            });
+        }];
+
+    });
 // Source: src/string/acute.string.js
 angular.module('acute.string', [
     'acute.string.toCamelCase',
