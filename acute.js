@@ -1,12 +1,13 @@
 (function () {
 
-/*! acute - v0.3.2 - 2015-01-28
+/*! acute - v0.3.3 - 2015-01-29
 * Copyright (c) 2015 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
 
 // Source: src/acute.js
 angular.module('acute.utils',  [
+    'acute.clientStore',
     'acute.filters',
     'acute.gravatar',
     'acute.markdown',
@@ -14,6 +15,32 @@ angular.module('acute.utils',  [
     'acute.session',
     'acute.string'
 ]);
+// Source: src/clientStore/acute.clientStore.js
+angular.module('acute.clientStore', [])
+
+    .value('localStorage', window.localStorage)
+
+    .provider('clientStore', function () {
+
+        var LS_PREFIX = 'clientStore';
+
+        this.setPrefix = function (prefix) {
+            LS_PREFIX = prefix;
+        };
+
+        this.$get = ['$rootScope', 'localStorage', function ($rootScope, localStorage) {
+
+            var tokenString = localStorage[LS_PREFIX],
+                cache       = tokenString ? JSON.parse(tokenString) : {};
+
+            $rootScope.$watch(function () { return cache; }, function () {
+                localStorage[LS_PREFIX] = JSON.stringify(cache);
+            }, true);
+
+            return cache;
+        }];
+
+    });
 // Source: src/filters/acute.filter.camelCaseToHuman.js
 angular.module('acute.filter.camelCaseToHuman', []).filter('camelCaseToHuman', function() {
     return function(input) {
@@ -68,6 +95,42 @@ angular.module('acute.gravatar', ['acute.md5'])
             }
         };
     }]);
+// Source: src/httpStatus/acute.httpStatus.js
+angular.module('acute.httpStatus', ['acute.lodash'])
+
+    .value('httpStatuses', [
+        { code: 200, name: 'OK' },
+        { code: 201, name: 'Created' },
+        { code: 204, name: 'No Content' },
+        { code: 301, name: 'Moved Permanently' },
+        { code: 302, name: 'Found' },
+        { code: 400, name: 'Bad Request' },
+        { code: 401, name: 'Unauthorized' },
+        { code: 403, name: 'Forbidden' },
+        { code: 404, name: 'Not Found' },
+        { code: 500, name: 'Internal Server Error' },
+        { code: 503, name: 'Service Unavailable' }
+    ])
+
+    .service('httpStatus', ['_', 'httpStatuses', function (_, httpStatuses) {
+
+        this.getName = function (code) {
+
+            return _.find(httpStatuses, function (status) {
+                return status.code === code;
+            }).name;
+        };
+
+        this.getCode = function (name) {
+
+            return _.find(httpStatuses, function (status) {
+                return status.name === name;
+            }).code;
+        };
+
+    }]);
+// Source: src/lodash/acute.lodash.js
+angular.module('acute.lodash', []).value('_', window._);
 // Source: src/markdown/acute.markdown.js
 angular.module('acute.markdown', ['ngSanitize'])
 
@@ -384,6 +447,7 @@ angular.module('acute.session', [])
                     this.token = undefined;
                     this.user  = undefined;
                 } }
+
             });
         }];
 
