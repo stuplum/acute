@@ -7,7 +7,7 @@ describe('acute.session', function () {
     describe('session', function () {
 
         beforeEach(function () {
-            mockModule('cache', {session: {}});
+            mockModule('clientStore', {session: {}});
         });
 
         it('should initialise session token to undefined', inject(function (session) {
@@ -18,18 +18,18 @@ describe('acute.session', function () {
             expect(session.user).toBeUndefined();
         }));
 
-        it('should initialise session token from cache', inject(function (cache, session) {
+        it('should initialise session token from clientStore', inject(function (clientStore, session) {
 
-            cache.session.token = 'token from cache';
+            clientStore.session.token = 'token from clientStore';
 
-            expect(session.token).toBe('token from cache');
+            expect(session.token).toBe('token from clientStore');
         }));
 
-        it('should initialise session user from cache', inject(function (cache, session) {
+        it('should initialise session user from clientStore', inject(function (clientStore, session) {
 
-            cache.session.user = 'user from cache';
+            clientStore.session.user = 'user from clientStore';
 
-            expect(session.user).toBe('user from cache');
+            expect(session.user).toBe('user from clientStore');
         }));
 
         describe('isActive', function () {
@@ -48,34 +48,34 @@ describe('acute.session', function () {
 
         describe('create', function () {
 
-            it('should add token to session', inject(function (cache, session) {
+            it('should add token to session', inject(function (clientStore, session) {
 
                 session.create('a,session,token');
 
                 expect(session.token).toBe('a,session,token');
-                expect(cache.session.token).toBe('a,session,token');
+                expect(clientStore.session.token).toBe('a,session,token');
             }));
 
-            it('should add user to session', inject(function (cache, session) {
+            it('should add user to session', inject(function (clientStore, session) {
 
                 session.create('bovvered', 'a,session,user');
 
                 expect(session.user).toBe('a,session,user');
-                expect(cache.session.user).toBe('a,session,user');
+                expect(clientStore.session.user).toBe('a,session,user');
             }));
 
-            it('should overwrite an existing token', inject(function (cache, session) {
+            it('should overwrite an existing token', inject(function (clientStore, session) {
 
-                cache.session.token = 'an old token';
+                clientStore.session.token = 'an old token';
 
                 session.create('a,session,token');
 
                 expect(session.token).toBe('a,session,token');
             }));
 
-            it('should overwrite an existing user', inject(function (cache, session) {
+            it('should overwrite an existing user', inject(function (clientStore, session) {
 
-                cache.session.user = 'an old user';
+                clientStore.session.user = 'an old user';
 
                 session.create('menocare', 'a,session,user');
 
