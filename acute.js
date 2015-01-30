@@ -1,6 +1,6 @@
 (function () {
 
-/*! acute - v0.3.3 - 2015-01-29
+/*! acute - v0.3.4 - 2015-01-30
 * Copyright (c) 2015 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
@@ -396,7 +396,7 @@ angular.module('acute.md5', [])
 
     }]);
 // Source: src/session/acute.session.js
-angular.module('acute.session', [])
+angular.module('acute.session', ['acute.clientStore'])
 
     .provider('session', function () {
 
@@ -406,10 +406,10 @@ angular.module('acute.session', [])
             CACHE_KEY = cacheKey;
         };
 
-        this.$get = ['cache', function (cache) {
+        this.$get = ['clientStore', function (clientStore) {
 
             function initSessionInCache() {
-                cache[CACHE_KEY] = cache[CACHE_KEY] || {};
+                clientStore[CACHE_KEY] = clientStore[CACHE_KEY] || {};
             }
 
             initSessionInCache();
@@ -418,19 +418,19 @@ angular.module('acute.session', [])
 
                 token: {
                     get: function () {
-                        return cache[CACHE_KEY].token;
+                        return clientStore[CACHE_KEY].token;
                     },
                     set: function (value) {
-                        cache[CACHE_KEY].token = value;
+                        clientStore[CACHE_KEY].token = value;
                     }
                 },
 
                 user: {
                     get: function () {
-                        return cache[CACHE_KEY].user;
+                        return clientStore[CACHE_KEY].user;
                     },
                     set: function (value) {
-                        cache[CACHE_KEY].user = value;
+                        clientStore[CACHE_KEY].user = value;
                     }
                 },
 
