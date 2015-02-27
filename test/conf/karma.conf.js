@@ -6,14 +6,20 @@ module.exports = function (config) {
         frameworks: ['jasmine', 'sinon'],
 
         files: [
+            'bower_components/jquery/dist/jquery.min.js',
+            'bower_components/moment/min/moment.min.js',
+            'bower_components/lodash/lodash.js',
+
             'bower_components/angular/angular.js',
             'bower_components/angular-sanitize/angular-sanitize.js',
-            'bower_components/lodash/lodash.js',
+
+            'bower_components/clndr/clndr.min.js',
             'bower_components/showdown/src/showdown.js',
             'bower_components/showdown/src/extensions/*.js',
 
             'bower_components/angular-mocks/angular-mocks.js',
             'test/lib/spec-helper.js',
+            'test/lib/jasmine-sinon.js',
 
             'src/**/*.js',
 

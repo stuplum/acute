@@ -23,13 +23,38 @@
     window.compileDirective = function(_el_, _config_) {
 
         var compiledEl,
+            parentScope,
             config = _config_ || {};
+
+        if (config.parentScope) {
+            parentScope = config.parentScope;
+            delete config.parentScope;
+        }
+
+        function createEl(el) {
+
+            var $el = angular.element(el);
+
+            if(parentScope) {
+                _.each(parentScope, function (ctrl, name) {
+                    var controllerName = ['$', name, 'Controller'].join('');
+                    $el.data(controllerName, ctrl);
+                });
+            }
+
+            return $el;
+        }
 
         inject(function($rootScope, $compile) {
 
             angular.extend($rootScope, config.$rootScope || {});
 
-            compiledEl = $compile(angular.element(_el_))($rootScope);
+            compiledEl = $compile(createEl(_el_))($rootScope);
+
+            compiledEl.updateScope = function (k, v) {
+                compiledEl.scope()[k] = v;
+                compiledEl.scope().$apply();
+            };
 
             $rootScope.$digest();
         });
