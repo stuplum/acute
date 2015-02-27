@@ -1,6 +1,6 @@
 (function () {
 
-/*! acute - v0.3.4 - 2015-01-30
+/*! acute - v0.3.5 - 2015-02-27
 * Copyright (c) 2015 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
@@ -8,12 +8,14 @@
 // Source: src/acute.js
 angular.module('acute.utils',  [
     'acute.clientStore',
+    'acute.clndr',
     'acute.filters',
     'acute.gravatar',
     'acute.markdown',
     'acute.md5',
     'acute.session',
-    'acute.string'
+    'acute.string',
+    'acute.whenReady'
 ]);
 // Source: src/clientStore/acute.clientStore.js
 angular.module('acute.clientStore', [])
@@ -41,6 +43,66 @@ angular.module('acute.clientStore', [])
         }];
 
     });
+// Source: src/clndr/acute.clndr.js
+angular.module('acute.clndr', ['acute.whenReady'])
+
+    .constant('acuteClndrConfig', {})
+
+    .provider('acuteClndrFactory', ['acuteClndrConfig', function (acuteClndrConfig) {
+
+        var config = angular.copy(acuteClndrConfig);
+
+        this.setConfig = function setConfig(key, val) {
+            config[key] = val;
+        };
+
+        this.$get = function acuteClndrFactory() {
+
+            var clndr;
+
+            function mergeConfig(render) {
+                return angular.extend(config, {render: render});
+            }
+
+            return {
+
+                create: function (render) {
+                    return clndr = angular.element('<div/>').clndr(mergeConfig(render));
+                },
+
+                getClndr: function () {
+                    return clndr;
+                }
+            };
+        };
+    }])
+
+    .controller('AcuteClndrCtrl', ['$scope', 'whenReady', 'acuteClndrFactory', function ($scope, whenReady, acuteClndrFactory) {
+
+        this.back    = function () { acuteClndrFactory.getClndr().back(); };
+        this.forward = function () { acuteClndrFactory.getClndr().forward(); };
+
+        $scope.$watchCollection('events', whenReady(function(events) {
+            acuteClndrFactory.getClndr().setEvents(events);
+        }));
+    }])
+
+    .directive('acuteClndr', ['acuteClndrFactory', function (acuteClndrFactory) {
+
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            scope: { events: '=clndrEvents' },
+            controller: 'AcuteClndrCtrl',
+            link: function link(scope, el, attrs, ctrl, transclude) {
+                transclude(scope, function transclude(clone) {
+                    el.append(clone);
+                    acuteClndrFactory.create(_.partial(angular.extend, scope));
+                });
+            }
+        };
+    }]);
 // Source: src/filters/acute.filter.camelCaseToHuman.js
 angular.module('acute.filter.camelCaseToHuman', []).filter('camelCaseToHuman', function() {
     return function(input) {
@@ -517,4 +579,14 @@ angular
         return function (input) {
             return normalizeAndSeparate(input, '-');
         };
-    }]);})();
+    }]);
+// Source: src/whenReady/acute.whenReady.js
+angular.module('acute.whenReady', [])
+
+    .value('whenReady', function whenReady(callback) {
+        return function (curr, prev) {
+            if (curr !== prev) {
+                callback(curr, prev);
+            }
+        };
+    });})();
