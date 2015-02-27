@@ -3,7 +3,7 @@
   "author": "stuplum <stuplum@gmail.com>",
   "license": "BSD",
   "description": "Collection of utilities for AngularJS",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "keywords": [
     "angularjs",
     "md5",
