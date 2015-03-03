@@ -32,7 +32,9 @@
     "karma-growl-reporter": "~0.1",
     "karma-jasmine": "~0.1",
     "karma-sinon": "0.0.1",
-    "sinon": "^1.12.2"
+    "sinon": "^1.12.2",
+    "karma-radii": "0.0.1",
+    "radii": "0.0.1"
   },
   "scripts": {
     "test": "./node_modules/.bin/karma start test/conf/karma.conf.js --reporters=progress --singleRun=true"

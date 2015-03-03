@@ -3,7 +3,7 @@ module.exports = function (config) {
 
         basePath: '../../',
 
-        frameworks: ['jasmine', 'sinon'],
+        frameworks: ['jasmine', 'sinon', 'radii'],
 
         files: [
             'bower_components/jquery/dist/jquery.min.js',
@@ -18,7 +18,6 @@ module.exports = function (config) {
             'bower_components/showdown/src/extensions/*.js',
 
             'bower_components/angular-mocks/angular-mocks.js',
-            'test/lib/spec-helper.js',
             'test/lib/jasmine-sinon.js',
 
             'src/**/*.js',
