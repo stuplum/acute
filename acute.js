@@ -1,6 +1,6 @@
 (function () {
 
-/*! acute - v0.3.5 - 2015-03-03
+/*! acute - v0.3.7 - 2015-03-06
 * Copyright (c) 2015 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
@@ -13,6 +13,7 @@ angular.module('acute.utils',  [
     'acute.gravatar',
     'acute.markdown',
     'acute.md5',
+    'acute.moment',
     'acute.session',
     'acute.string',
     'acute.whenReady'
@@ -456,6 +457,16 @@ angular.module('acute.md5', [])
 
         return md5;
 
+    }]);
+// Source: src/moment/acute.moment.js
+angular.module('acute.moment', [])
+
+    .value('moment', window.moment)
+
+    .filter('moment', [function () {
+        return function momentFilter(momentDate, format) {
+            return momentDate.format(format);
+        };
     }]);
 // Source: src/session/acute.session.js
 angular.module('acute.session', ['acute.clientStore'])

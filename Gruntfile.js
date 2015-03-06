@@ -34,7 +34,7 @@ module.exports = function(grunt) {
 
             prod: {
                 files: [
-                    { dest: '<%= pkg.name %>.js', src: ['<%= dirs.src %>/acute.js', '<%= dirs.src %>/**/acute.*.js'], nonull: true }
+                    { dest: '<%= pkg.name %>.js', src: ['<%= dirs.src %>/acute.js', '<%= dirs.src %>/**/acute.*.js', '!<%= dirs.src %>/**/acute.*.spec.js'], nonull: true }
                 ]
             }
         },
@@ -86,6 +86,7 @@ module.exports = function(grunt) {
 
             test: {
                 options: {
+                    unused: false,
                     globals: {
                         angular: true,
                         jQuery: true,
@@ -111,11 +112,11 @@ module.exports = function(grunt) {
                         responses: true
                     }
                 },
-                src: ['test/unit/*.js']
+                src: ['src/**/*.spec.js']
             },
 
             src: {
-                src: ['src/**/*.js']
+                src: ['src/**/*.js', '!src/**/*.spec.js']
             }
         }
     });
