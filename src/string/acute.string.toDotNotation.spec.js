@@ -16,7 +16,7 @@ describe('acute.string', function() {
 
                 module(scenario.package);
 
-                expect(function () { inject(function (stringToDotNotation) { /* injected service */ }) }).not.toThrow();
+                expect(function () { inject(function (stringToDotNotation) { /* injected service */ }); }).not.toThrow();
             });
         });
 

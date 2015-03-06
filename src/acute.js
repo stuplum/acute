@@ -5,6 +5,7 @@ angular.module('acute.utils',  [
     'acute.gravatar',
     'acute.markdown',
     'acute.md5',
+    'acute.moment',
     'acute.session',
     'acute.string',
     'acute.whenReady'
