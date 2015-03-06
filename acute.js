@@ -1,6 +1,6 @@
 (function () {
 
-/*! acute - v0.3.7 - 2015-03-06
+/*! acute - v0.3.8 - 2015-03-06
 * Copyright (c) 2015 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
@@ -99,7 +99,9 @@ angular.module('acute.clndr', ['acute.whenReady'])
             link: function link(scope, el, attrs, ctrl, transclude) {
                 transclude(scope, function transclude(clone) {
                     el.append(clone);
-                    acuteClndrFactory.create(_.partial(angular.extend, scope));
+                    acuteClndrFactory.create(function (clndr) {
+                        angular.extend(scope, { clndr: clndr });
+                    });
                 });
             }
         };
