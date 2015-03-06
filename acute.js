@@ -1,6 +1,6 @@
 (function () {
 
-/*! acute - v0.3.8 - 2015-03-06
+/*! acute - v0.3.9 - 2015-03-06
 * Copyright (c) 2015 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
