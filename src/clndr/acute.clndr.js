@@ -54,7 +54,9 @@ angular.module('acute.clndr', ['acute.whenReady'])
             link: function link(scope, el, attrs, ctrl, transclude) {
                 transclude(scope, function transclude(clone) {
                     el.append(clone);
-                    acuteClndrFactory.create(_.partial(angular.extend, scope));
+                    acuteClndrFactory.create(function (clndr) {
+                        angular.extend(scope, { clndr: clndr });
+                    });
                 });
             }
         };

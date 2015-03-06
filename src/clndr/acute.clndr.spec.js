@@ -33,7 +33,7 @@ describe('acute.clndr', function () {
             acuteClndrFactory.create
                 .yields({ testData: 'test data' });
 
-            $clndr = compileDirective('<acute-clndr events="events"><span>{{ testData }}</span></acute-clndr>');
+            $clndr = compileDirective('<acute-clndr events="events"><span>{{ clndr.testData }}</span></acute-clndr>');
 
             expect($clndr.find('span').text()).toBe('test data');
 
