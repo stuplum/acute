@@ -20,9 +20,7 @@ module.exports = function (config) {
             'bower_components/angular-mocks/angular-mocks.js',
             'test/lib/jasmine-sinon.js',
 
-            'src/**/*.js',
-
-            'test/unit/**/*.js'
+            'src/**/*.js'
         ],
 
         exclude: [],
