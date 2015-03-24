@@ -8,5 +8,7 @@ angular.module('acute.utils',  [
     'acute.moment',
     'acute.session',
     'acute.string',
+    'acute.tether',
+    'acute.tooltip',
     'acute.whenReady'
 ]);

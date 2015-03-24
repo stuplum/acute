@@ -19,7 +19,9 @@ module.exports = function (config) {
             'bower_components/showdown/src/extensions/*.js',
 
             'bower_components/angular-mocks/angular-mocks.js',
+
             'test/lib/jasmine-sinon.js',
+            'test/lib/matchers.js',
 
             'src/**/*.js'
         ],
