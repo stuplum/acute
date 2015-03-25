@@ -109,7 +109,9 @@ module.exports = function(grunt) {
                         and: true,
                         cleanup: true,
                         sinon: true,
-                        responses: true
+                        responses: true,
+                        isJqueryElement: true,
+                        isScope: true
                     }
                 },
                 src: ['src/**/*.spec.js']
