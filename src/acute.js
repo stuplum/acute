@@ -6,7 +6,10 @@ angular.module('acute.utils',  [
     'acute.markdown',
     'acute.md5',
     'acute.moment',
+    'acute.popover',
     'acute.session',
     'acute.string',
+    'acute.tether',
+    'acute.tooltip',
     'acute.whenReady'
 ]);
