@@ -1,6 +1,6 @@
 (function () {
 
-/*! acute - v0.3.9 - 2015-03-06
+/*! acute - v0.4.0 - 2015-03-25
 * Copyright (c) 2015 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
@@ -14,8 +14,11 @@ angular.module('acute.utils',  [
     'acute.markdown',
     'acute.md5',
     'acute.moment',
+    'acute.popover',
     'acute.session',
     'acute.string',
+    'acute.tether',
+    'acute.tooltip',
     'acute.whenReady'
 ]);
 // Source: src/clientStore/acute.clientStore.js
@@ -470,6 +473,73 @@ angular.module('acute.moment', [])
             return momentDate.format(format);
         };
     }]);
+// Source: src/popover/acute.popover.js
+angular.module('acute.popover', ['ng', 'acute.tooltip'])
+
+    .provider('$popoverDirective', function () {
+
+        this.$get = ['$timeout', '$tooltipConfig', '$tooltip', function $popoverDirective($timeout, $tooltipConfig, $tooltip) {
+            return function popoverDirective(name, options) {
+
+                return {
+
+                    restrict: 'EA',
+                    scope: {
+                        content: '@' + name,
+                        tether: '=?' + name + 'Tether'
+                    },
+
+                    link: function ($scope, $el) {
+
+                        var CLOSE_DELAY = 50;
+
+                        var $timer,
+                            tooltip = $tooltip($tooltipConfig($scope, $el, options)),
+                            $tooltipEl = tooltip.element;
+
+                        function cancelTimer(cb) {
+                            return function () {
+                                $timeout.cancel($timer);
+                                (cb || angular.noop)();
+                            };
+                        }
+
+                        function open() {
+                            $scope.$apply(tooltip.open);
+                        }
+
+                        function delay(cb) {
+                            return function () {
+                                $timer = $timeout(function () {
+                                    (cb || angular.noop)();
+                                }, CLOSE_DELAY);
+                            };
+                        }
+
+                        function close() {
+                            $scope.$apply(tooltip.close);
+                        }
+
+                        $el
+                            .on('mouseenter', cancelTimer(open))
+                            .on('mouseleave', delay(close));
+
+                        $tooltipEl
+                            .on('mouseenter', cancelTimer())
+                            .on('mouseleave', delay(close));
+                    }
+                };
+            };
+        }];
+    })
+
+    .directive('acutePopover', ['$popoverDirective', function ($popoverDirective) {
+        return $popoverDirective('acutePopover');
+    }])
+
+    .run(['$templateCache', function ($templateCache) {
+        $templateCache.put('template/acute-popover.html', '<div class="acute-popover">{{content}}</div>');
+    }]);
 // Source: src/session/acute.session.js
 angular.module('acute.session', ['acute.clientStore'])
 
@@ -592,6 +662,137 @@ angular
         return function (input) {
             return normalizeAndSeparate(input, '-');
         };
+    }]);
+// Source: src/tether/acute.tether.js
+angular.module('acute.tether', ['ng'])
+
+    .factory('$tether', ['$window', function ($window) {
+        return function $tether(config) {
+            return new $window.Tether(config);
+        };
+    }]);
+// Source: src/tooltip/acute.tooltip.js
+angular.module('acute.tooltip', ['ng', 'acute.tether'])
+
+    .value('$tooltipConfig', function $tooltipConfig(scope, element, options) {
+
+        var optionsCopy = angular.copy(options, {});
+
+        angular.extend(scope, optionsCopy.scope);
+
+        delete optionsCopy.scope;
+
+        return angular.extend({target: element, scope: scope}, optionsCopy, {tether: scope.tether});
+    })
+
+    .provider('$tooltip', function () {
+
+        var defaultTemplateUrl = 'template/acute-tooltip.html';
+
+        this.setDefaultTemplateUrl = function (templateUrl) {
+            defaultTemplateUrl = templateUrl;
+        };
+
+        var defaultTetherOptions = {
+            attachment: 'top middle',
+            targetAttachment: 'bottom middle'
+        };
+
+        this.setDefaultTetherOptions = function (options) {
+            angular.extend(defaultTetherOptions, options);
+        };
+
+        this.$get = ['$rootScope', '$animate', '$compile', '$templateCache', '$tether', function $tooltip($rootScope, $animate, $compile, $templateCache, $tether) {
+
+            return function tooltip(options) {
+
+                var scope, element, tether;
+
+                function getTemplate() {
+                    return options.template || $templateCache.get(options.templateUrl);
+                }
+
+                function getScope() {
+                    return options.scope || $rootScope.$new();
+                }
+
+                options        = angular.extend({ templateUrl: defaultTemplateUrl }, options);
+                options.tether = angular.extend(defaultTetherOptions, options.tether);
+
+                scope   = getScope();
+                element = $compile(getTemplate())(scope);
+
+                function attachTether() {
+
+                    var tetherConfig = angular.extend({
+                        element: element,
+                        target: options.target
+                    }, options.tether);
+
+                    tether = $tether(tetherConfig);
+                }
+
+                function detachTether() {
+                    if (tether) {
+                        tether.destroy();
+                    }
+                }
+
+                function open() {
+                    $animate.enter(element, null, options.target);
+                    attachTether();
+                }
+
+                function close() {
+                    $animate.leave(element);
+                    detachTether();
+                }
+
+                scope.$on('$destroy', close);
+
+                return {
+                    element: element,
+                    open: open,
+                    close: close
+                };
+            };
+        }];
+    })
+
+    .provider('$tooltipDirective', function () {
+
+        this.$get = ['$tooltipConfig', '$tooltip', function $tooltipDirective($tooltipConfig, $tooltip) {
+            return function tooltipDirective(name, options) {
+
+                return {
+
+                    restrict: 'EA',
+                    scope: {
+                        content: '@' + name,
+                        tether: '=?' + name + 'Tether'
+                    },
+
+                    link: function ($scope, $el) {
+
+                        var tooltip = $tooltip($tooltipConfig($scope, $el, options));
+
+                        function mouseEnter() { $scope.$apply(tooltip.open); }
+                        function mouseLeave() { $scope.$apply(tooltip.close); }
+
+                        $el.on('mouseenter', mouseEnter);
+                        $el.on('mouseleave', mouseLeave);
+                    }
+                };
+            };
+        }];
+    })
+
+    .directive('acuteTooltip', ['$tooltipDirective', function ($tooltipDirective) {
+        return $tooltipDirective('acuteTooltip');
+    }])
+
+    .run(['$templateCache', function ($templateCache) {
+        $templateCache.put('template/acute-tooltip.html', '<div class="acute-tooltip">{{content}}</div>');
     }]);
 // Source: src/whenReady/acute.whenReady.js
 angular.module('acute.whenReady', [])
