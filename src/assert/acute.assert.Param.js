@@ -9,6 +9,7 @@ angular.module('acute.assert.Param', [])
             var proto;
 
             function _Param(name, val) {
+                /*jshint validthis: true */
                 this.v = val;
                 this.name = name;
                 this._contexts = [null];
@@ -167,7 +168,7 @@ angular.module('acute.assert.Param', [])
                 }
 
                 if (context.mustNotBeEmpty) {
-                    if (v.length === 0) return false;
+                    if (v.length === 0) { return false; }
                 }
 
                 var prevContext = context.prevContext;
@@ -275,7 +276,7 @@ angular.module('acute.assert.Param', [])
 
             function __formatString(string) {
                 var args = arguments;
-                var pattern = RegExp("%([1-" + (arguments.length - 1) + "])", "g");
+                var pattern = new RegExp("%([1-" + (arguments.length - 1) + "])", "g");
                 return string.replace(pattern, function (match, index) {
                     return args[index];
                 });
