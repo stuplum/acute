@@ -4,16 +4,16 @@ angular.module('acute.assert.assertConfig', ['acute.assert.Param'])
 
     .factory('assertConfig', ['Param', function (Param) {
 
+        function _unCurry(f) {
+            var call = Function.call;
+            return function () {
+                return call.apply(f, arguments);
+            };
+        }
+
         function _extend(target, source, propNames) {
 
-            var __hasOwnProperty = __unCurry(Object.prototype.hasOwnProperty);
-
-            function __unCurry(f) {
-                var call = Function.call;
-                return function () {
-                    return call.apply(f, arguments);
-                };
-            }
+            var __hasOwnProperty = _unCurry(Object.prototype.hasOwnProperty);
 
             if (!source) { return target; }
 
@@ -40,6 +40,7 @@ angular.module('acute.assert.assertConfig', ['acute.assert.Param'])
                 if (typeof(config) !== 'object') {
                     throw new Error('Configuration parameter should be an object, instead it is a: ' + typeof(config));
                 }
+                /*jshint validthis: true */
                 this.config = config;
                 this.params = [];
             }
