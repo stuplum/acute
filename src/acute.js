@@ -1,4 +1,5 @@
 angular.module('acute.utils',  [
+    'acute.assert',
     'acute.clientStore',
     'acute.clndr',
     'acute.filters',
