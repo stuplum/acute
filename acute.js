@@ -1,12 +1,13 @@
 (function () {
 
-/*! acute - v0.4.0 - 2015-03-25
+/*! acute - v0.5.0 - 2015-04-22
 * Copyright (c) 2015 stuplum <stuplum@gmail.com>; Licensed  */
 
 'use strict';
 
 // Source: src/acute.js
 angular.module('acute.utils',  [
+    'acute.assert',
     'acute.clientStore',
     'acute.clndr',
     'acute.filters',
@@ -20,6 +21,427 @@ angular.module('acute.utils',  [
     'acute.tether',
     'acute.tooltip',
     'acute.whenReady'
+]);
+// Source: src/assert/acute.assert.Param.js
+angular.module('acute.assert.Param', [])
+
+    .factory('Param', function () {
+
+        var Param = (function () {
+
+            var proto;
+
+            function _Param(name, val) {
+                /*jshint validthis: true */
+                this.v = val;
+                this.name = name;
+                this._contexts = [null];
+            }
+
+            proto = _Param.prototype;
+
+            proto.isObject = function () {
+                return this.isTypeOf('object');
+            };
+
+            proto.isBoolean = function () {
+                return this.isTypeOf('boolean');
+            };
+
+            proto.isString = function () {
+                return this.isTypeOf('string');
+            };
+
+            proto.isNonEmptyString = function () {
+                return addContext(this, {
+                    fn: isNonEmptyString,
+                    msg: 'must be a nonEmpty string'
+                });
+            };
+
+            function isNonEmptyString(context, v) {
+                if (v == null) { return false; }
+                return (typeof(v) === 'string') && v.length > 0;
+            }
+
+            proto.isNumber = function () {
+                return this.isTypeOf('number');
+            };
+
+            proto.isFunction = function () {
+                return this.isTypeOf('function');
+            };
+
+
+            proto.isTypeOf = function (typeName) {
+                return addContext(this, {
+                    fn: isTypeOf,
+                    typeName: typeName,
+                    msg: 'must be a \'' + typeName + '\''
+                });
+            };
+
+            function isTypeOf(context, v) {
+
+                if (v == null)  {
+                    return false;
+                }
+
+                return typeof(v) === context.typeName;
+            }
+
+            proto.isInstanceOf = function (type, typeName) {
+
+                typeName = typeName || type.prototype._$typeName;
+
+                return addContext(this, {
+                    fn: isInstanceOf,
+                    type: type,
+                    typeName: typeName,
+                    msg: 'must be an instance of \'' + typeName + '\''
+                });
+            };
+
+            function isInstanceOf(context, v) {
+
+                if (v == null) {
+                    return false;
+                }
+
+                return (v instanceof context.type);
+            }
+
+            proto.hasProperty = function (propertyName) {
+                return addContext(this, {
+                    fn: hasProperty,
+                    propertyName: propertyName,
+                    msg: 'must have a \'' + propertyName + '\' property'
+                });
+            };
+
+            function hasProperty(context, v) {
+                if (v == null) { return false; }
+                return (v[context.propertyName] !== undefined);
+            }
+
+            proto.isRequired = function (allowNull) {
+                return addContext(this, {
+                    fn: isRequired,
+                    allowNull: allowNull,
+                    msg: 'is required'
+                });
+            };
+
+            function isRequired(context, v) {
+                if (context.allowNull) {
+                    return v !== undefined;
+                } else {
+                    return v != null;
+                }
+            }
+
+            proto.isOptional = function () {
+                return addContext(this, {
+                    fn: isOptional,
+                    prevContext: null,
+                    msg: isOptionalMessage
+                });
+            };
+
+            function isOptional(context, v) {
+
+                if (v == null) {
+                    return true;
+                }
+
+                var prevContext = context.prevContext;
+
+                if (prevContext) {
+                    return prevContext.fn(prevContext, v);
+                } else {
+                    return true;
+                }
+            }
+
+            function isOptionalMessage(context, v) {
+
+                var prevContext = context.prevContext,
+                    element     = prevContext ? ' or it ' + getMessage(prevContext, v) : '';
+
+                return 'is optional' + element;
+            }
+
+            proto.isNonEmptyArray = function () {
+                return this.isArray(true);
+            };
+
+            proto.isArray = function (mustNotBeEmpty) {
+                return addContext(this, {
+                    fn: isArray,
+                    mustNotBeEmpty: mustNotBeEmpty,
+                    prevContext: null,
+                    msg: isArrayMessage
+                });
+            };
+
+            function isArray(context, v) {
+
+                if (!Array.isArray(v)) {
+                    return false;
+                }
+
+                if (context.mustNotBeEmpty) {
+                    if (v.length === 0) { return false; }
+                }
+
+                var prevContext = context.prevContext;
+                if (!prevContext) { return true; }
+
+                return v.every(function (v1) {
+                    return prevContext.fn(prevContext, v1);
+                });
+            }
+
+            function isArrayMessage(context, v) {
+
+                var arrayDesc   = context.mustNotBeEmpty ? 'a nonEmpty array' : 'an \'array\'',
+                    prevContext = context.prevContext,
+                    element     = prevContext ? ' where each element ' + getMessage(prevContext, v) : '';
+
+                return 'must be ' + arrayDesc + element;
+            }
+
+            function getMessage(context, v) {
+
+                var msg = context.msg;
+
+                if (typeof(msg) === 'function') {
+                    msg = msg(context, v);
+                }
+
+                return msg;
+            }
+
+            proto.check = function (defaultValue) {
+
+                var ok = exec(this);
+
+                if (ok === undefined) { return; }
+
+                if (!ok) {
+                    throw new Error(this.getMessage());
+                }
+
+                if (this.v !== undefined) {
+                    return this.v;
+                } else {
+                    return defaultValue;
+                }
+            };
+
+            function addContext(instance, context) {
+
+                if (instance._context) {
+
+                    var curContext = instance._context;
+
+                    while (curContext.prevContext != null) {
+                        curContext = curContext.prevContext;
+                    }
+
+                    if (curContext.prevContext === null) {
+                        curContext.prevContext = context;
+                        // just update the prevContext but don't change the curContext.
+                        return instance;
+                    } else if (context.prevContext == null) {
+                        context.prevContext = instance._context;
+                    } else {
+                        throw new Error('Illegal construction - use \'or\' to combine checks');
+                    }
+                }
+
+                return setContext(instance, context);
+            }
+
+            function setContext(instance, context) {
+
+                instance._contexts[instance._contexts.length - 1] = context;
+                instance._context = context;
+
+                return instance;
+            }
+
+            function exec(instance) {
+
+                var contexts = instance._contexts;
+
+                if (contexts[contexts.length - 1] == null) {
+                    contexts.pop();
+                }
+
+                if (contexts.length === 0) {
+                    return undefined;
+                }
+
+                return contexts.some(function (context) {
+                    return context.fn(context, instance.v);
+                });
+            }
+
+            proto.getMessage = function () {
+
+                var message = this._contexts.map(function (context) {
+                    return getMessage(context, this.v);
+                }.bind(this)).join(', or it ');
+
+                return __formatString(this.MESSAGE_PREFIX, this.name) + ' ' + message;
+            };
+
+            function __formatString(string) {
+                var args = arguments;
+                var pattern = new RegExp("%([1-" + (arguments.length - 1) + "])", "g");
+                return string.replace(pattern, function (match, index) {
+                    return args[index];
+                });
+            }
+
+            proto.withDefault = function (defaultValue) {
+                this.defaultValue = defaultValue;
+                return this;
+            };
+
+            proto.apply = function (dest) {
+                if (this.v !== undefined) {
+                    dest[this.name] = this.v;
+                } else {
+                    if (this.defaultValue !== undefined) {
+                        dest[this.name] = this.defaultValue;
+                    }
+                }
+            };
+
+            proto.MESSAGE_PREFIX = 'The \'%1\' parameter';
+
+            return _Param;
+
+        })();
+
+        return Param;
+    });
+// Source: src/assert/acute.assert.assertConfig.js
+angular.module('acute.assert.assertConfig', ['acute.assert.Param'])
+
+    .factory('assertConfig', ['Param', function (Param) {
+
+        function _unCurry(f) {
+            var call = Function.call;
+            return function () {
+                return call.apply(f, arguments);
+            };
+        }
+
+        function _extend(target, source, propNames) {
+
+            var __hasOwnProperty = _unCurry(Object.prototype.hasOwnProperty);
+
+            if (!source) { return target; }
+
+            if (propNames) {
+                propNames.forEach(function (propName) {
+                    target[propName] = source[propName];
+                });
+            } else {
+                for (var propName in source) {
+                    if (__hasOwnProperty(source, propName)) {
+                        target[propName] = source[propName];
+                    }
+                }
+            }
+
+            return target;
+        }
+
+        var ConfigParam = (function () {
+
+            var proto;
+
+            function _ConfigParam(config) {
+                if (typeof(config) !== 'object') {
+                    throw new Error('Configuration parameter should be an object, instead it is a: ' + typeof(config));
+                }
+                /*jshint validthis: true */
+                this.config = config;
+                this.params = [];
+            }
+
+            proto = _ConfigParam.prototype;
+
+            proto.whereParam = function (propName) {
+
+                var param;
+
+                function checkAll(params) {
+                    params.forEach(function (param) {
+                        param.check();
+                    });
+                }
+
+                function applyAll(params, dest) {
+
+                    checkAll(params);
+
+                    params.forEach(function (param) {
+                        param.apply(dest);
+                    });
+                }
+
+                param = new Param(propName, this.config[propName]);
+
+                _extend(param, {
+
+                    whereParam: function (propName) {
+                        return this.whereParam(propName);
+                    }.bind(this),
+
+                    checkAll: function () {
+                        checkAll(this.params);
+                    }.bind(this),
+
+                    applyAll: function (dest) {
+                        applyAll(this.params, dest);
+                    }.bind(this)
+                });
+
+                param.parent = this;
+
+                this.params.push(param);
+
+                return param;
+            };
+
+            return _ConfigParam;
+
+        })();
+
+        return function assertConfig(config) {
+            return new ConfigParam(config);
+        };
+
+    }]);
+// Source: src/assert/acute.assert.assertParam.js
+angular.module('acute.assert.assertParam', ['acute.assert.Param'])
+
+    .factory('assertParam', function (Param) {
+
+        return function assertParam(name, val) {
+            return new Param(name, val);
+        };
+    });
+// Source: src/assert/acute.assert.js
+angular.module('acute.assert', [
+    'acute.assert.Param',
+    'acute.assert.assertParam',
+    'acute.assert.assertConfig'
 ]);
 // Source: src/clientStore/acute.clientStore.js
 angular.module('acute.clientStore', [])
